@@ -1,0 +1,56 @@
+using System.Threading.Tasks;
+using Impostor.Api.Net;
+using Impostor.Api.Net.Inner.Objects;
+using Impostor.Api.Net.Messages;
+using Microsoft.Extensions.Logging;
+using Reactor.Impostor.Rpcs;
+using Impostor.Plugins.EBPlugin.Handlers;
+
+namespace Impostor.Plugins.EBPlugin
+{
+    public class SendTeruteruRPC : ReactorCustomRpc<IInnerPlayerControl>
+    {
+        private readonly ILogger<SendTeruteruRPC> _logger;
+        private readonly IMessageWriterProvider _writerProvider;
+        private readonly GameEventListener.CRoleID _CRID;
+        private readonly GameEventListener.CRoleEnable _CRE;
+
+        public SendTeruteruRPC(ILogger<SendTeruteruRPC> logger, IMessageWriterProvider writerProvider)
+        {
+            _logger = logger;
+            _writerProvider = writerProvider;
+        }
+
+        public override string ModId => "local.EmptyBottle.au";
+
+        public override uint Id => 0;
+
+        public override async ValueTask<bool> HandleAsync(IInnerPlayerControl player, IClientPlayer sender, IClientPlayer? target, IMessageReader reader)
+        {
+            Deserialize(reader, out var roleID);
+            _logger.LogInformation("{player} get Role ID:{roleID}", player.PlayerInfo.PlayerName, roleID);
+            var SendCRID = -1;
+            await SendAsync(player, SendCRID);
+
+            return true;
+        }
+
+        public ValueTask SendAsync(IInnerPlayerControl player, int TeruteruID, IClient? targetClient = null)
+        {
+            var data = _writerProvider.Get();
+            Serialize(data, TeruteruID);
+            return base.SendAsync(player, data, targetClient?.Id ?? null);
+        }
+
+        public static void Serialize(IMessageWriter writer, int text)
+        {
+            writer.Write(text);
+        }
+
+
+        public static void Deserialize(IMessageReader reader, out int ID)
+        {
+            ID = reader.ReadInt32();
+        }
+    }
+}
