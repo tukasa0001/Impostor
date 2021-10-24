@@ -363,13 +363,13 @@ namespace Impostor.Server.Net.Inner.Objects
                 }
             }
 
-            if (string.IsNullOrWhiteSpace(name) || !name.All(TextBox.IsCharAllowed))
+            /*if (string.IsNullOrWhiteSpace(name) || !name.All(TextBox.IsCharAllowed))
             {
                 if (await sender.Client.ReportCheatAsync(RpcCalls.CheckName, "Client sent name containing illegal characters"))
                 {
                     return false;
                 }
-            }
+            }*/
 
             if (sender.Client.Name != name)
             {
