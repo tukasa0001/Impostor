@@ -1172,15 +1172,12 @@ namespace Impostor.Plugins.EBPlugin.Handlers
             var VoteBy = e.ClientPlayer;
         }
         [EventListener]
-        public void RepairSystemEvent(IPlayerRepairSystemEvent e) {
-            e.PlayerControl.SendChatToPlayerAsync("Debug MSG");
-            if(e.SystemType == SystemTypes.Comms) e.PlayerControl.SendChatToPlayerAsync("Comms");
-            if(e.SystemType == SystemTypes.Doors) e.PlayerControl.SendChatToPlayerAsync("Doors");
-            if(e.SystemType == SystemTypes.Reactor) e.PlayerControl.SendChatToPlayerAsync("Reactor");
-            if(e.SystemType == SystemTypes.Electrical) e.PlayerControl.SendChatToPlayerAsync("Light");
-            if(e.SystemType == SystemTypes.Shields) e.PlayerControl.SendChatToPlayerAsync("Shield");
-            if(e.SystemType == SystemTypes.Admin) e.PlayerControl.SendChatToPlayerAsync("Admin");
-            e.PlayerControl.SendChatToPlayerAsync(e.Amount.ToString());
+        public void BodyReportedEvent(IPlayerReportEvent e) {
+            _logger.LogInformation("通報者:" + e.PlayerControl.PlayerInfo.PlayerName);
+            _logger.LogInformation("死亡者:" + e.Body.PlayerInfo.PlayerName);
+            if(e.Game.GetClientPlayer(CRID.TeruteruID).Character.PlayerId == e.Body.PlayerId) {
+                e.IsCancelled = true;
+            }
         }
         [EventListener]
         public void Vented(IPlayerEnterVentEvent e) {

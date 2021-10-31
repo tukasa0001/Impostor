@@ -208,7 +208,7 @@ namespace Impostor.Server.Net.Inner.Objects
                     var deadPlayer = Game.GameNet.GameData!.GetPlayerById(targetId)?.Controller;
                     var @event = new PlayerReportEvent(Game, Game.GetClientPlayer(this.OwnerId)!, this, deadPlayer);
                     await _eventManager.CallAsync(@event);
-                    return @event.IsCancelled;
+                    return !@event.IsCancelled;
                     //break;
                 }
 
