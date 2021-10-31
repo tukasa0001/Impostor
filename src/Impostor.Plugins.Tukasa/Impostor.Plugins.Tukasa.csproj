@@ -9,5 +9,4 @@
   <ItemGroup>
     <PackageReference Include="ExtraPlayerFunctions" Version="1.0.4"/>
   </ItemGroup>
-  <Import Project="..\Reactor.Impostor\Reactor\Reactor.Shared\Reactor.Shared.projitems" Label="Shared"/>
 </Project>

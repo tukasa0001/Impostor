@@ -205,7 +205,11 @@ namespace Impostor.Server.Net.Inner.Objects
                     }
 
                     Rpc11ReportDeadBody.Deserialize(reader, out var targetId);
-                    break;
+                    var deadPlayer = Game.GameNet.GameData!.GetPlayerById(targetId)?.Controller;
+                    var @event = new PlayerReportEvent(Game, Game.GetClientPlayer(this.OwnerId)!, this, deadPlayer);
+                    await _eventManager.CallAsync(@event);
+                    return @event.IsCancelled;
+                    //break;
                 }
 
                 case RpcCalls.MurderPlayer:

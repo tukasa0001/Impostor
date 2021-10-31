@@ -973,22 +973,6 @@ namespace Impostor.Plugins.EBPlugin.Handlers
                         e.Game.FinishRpcAsync(writer);
                     }
                 }
-                if(cmd1 == "rpc") {
-                    if(byte.TryParse(cmd2, out var playerID)) {
-                        if(e.ClientPlayer.IsHost) {
-                            foreach(var player in e.Game.Players) {
-                                var writer2 = e.Game.StartRpc(e.ClientPlayer.Character.NetId, RpcCalls.CustomRoles, player.Character.PlayerId);
-                                writer2.Write(playerID);
-                                e.Game.SendToAsync(writer2, player.Character.PlayerId);
-                                e.Game.FinishRpcAsync(writer2);
-                            }
-                        } else {
-                            e.ClientPlayer.Character.SendChatToPlayerAsync("エラー:この機能はホストのみ使用可能です");
-                        }
-                    } else {
-                        e.ClientPlayer.Character.SendChatToPlayerAsync(PIDFail);
-                    }
-                }
                 if(cmd1 == "beimpostor") {
                     if(int.TryParse(cmd2, out var InfectID)) {
                         if(e.ClientPlayer.IsHost) {
@@ -1031,6 +1015,26 @@ namespace Impostor.Plugins.EBPlugin.Handlers
                                 e.Game.FinishRpcAsync(writer2);
                                 e.ClientPlayer.Character.SendChatToPlayerAsync("警告:この機能はデバッグ用のチートです");
                             }
+                        } else {
+                            e.ClientPlayer.Character.SendChatToPlayerAsync("エラー:この機能はホストのみ使用可能です");
+                        }
+                    } else {
+                        e.ClientPlayer.Character.SendChatToPlayerAsync(PIDFail);
+                    }
+                }
+                if(cmd1 == "speedhack") {
+                    if(int.TryParse(cmd2, out var TaskID)) {
+                        if(e.ClientPlayer.IsHost) {
+                            var player = e.ClientPlayer;
+                            var writer = e.Game.StartRpc(e.ClientPlayer.Character.NetId, RpcCalls.SyncSettings, player.Character.PlayerId);
+                            var memory = new MemoryStream();
+                            var writerBin = new BinaryWriter(memory);
+                            var Hacked = e.Game.Options;
+                            Hacked.PlayerSpeedMod = 3f;
+                            Hacked.Serialize(writerBin, GameOptionsData.LatestVersion);
+                            writer.WriteBytesAndSize(memory.ToArray());
+                            e.Game.SendToAsync(writer, player.Character.PlayerId);
+                            e.Game.FinishRpcAsync(writer);
                         } else {
                             e.ClientPlayer.Character.SendChatToPlayerAsync("エラー:この機能はホストのみ使用可能です");
                         }
@@ -1166,6 +1170,17 @@ namespace Impostor.Plugins.EBPlugin.Handlers
             Logger.WriteLine(e.ClientPlayer.Character.PlayerInfo.PlayerName + " voted for " + e.VotedFor.PlayerInfo.PlayerName);
             Logger.Close(); */
             var VoteBy = e.ClientPlayer;
+        }
+        [EventListener]
+        public void RepairSystemEvent(IPlayerRepairSystemEvent e) {
+            e.PlayerControl.SendChatToPlayerAsync("Debug MSG");
+            if(e.SystemType == SystemTypes.Comms) e.PlayerControl.SendChatToPlayerAsync("Comms");
+            if(e.SystemType == SystemTypes.Doors) e.PlayerControl.SendChatToPlayerAsync("Doors");
+            if(e.SystemType == SystemTypes.Reactor) e.PlayerControl.SendChatToPlayerAsync("Reactor");
+            if(e.SystemType == SystemTypes.Electrical) e.PlayerControl.SendChatToPlayerAsync("Light");
+            if(e.SystemType == SystemTypes.Shields) e.PlayerControl.SendChatToPlayerAsync("Shield");
+            if(e.SystemType == SystemTypes.Admin) e.PlayerControl.SendChatToPlayerAsync("Admin");
+            e.PlayerControl.SendChatToPlayerAsync(e.Amount.ToString());
         }
         [EventListener]
         public void Vented(IPlayerEnterVentEvent e) {
@@ -1402,6 +1417,7 @@ namespace Impostor.Plugins.EBPlugin.Handlers
             }
         }
         public void SetLederNameColor(Api.Games.IGame Game) {
+            if(!CRE.LeaderEnabled) return;
             foreach (var player in Game.Players) {
                 var CID = player.Client.Id;
                 var Leader = Game.GetClientPlayer(CRID.LeaderID);
