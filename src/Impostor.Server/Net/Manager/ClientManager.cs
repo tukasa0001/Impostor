@@ -97,13 +97,13 @@ namespace Impostor.Server.Net.Manager
                 return;
             }
 
-            if (string.IsNullOrWhiteSpace(name) || !name.All(TextBox.IsCharAllowed))
+            /*if (string.IsNullOrWhiteSpace(name) || !name.All(TextBox.IsCharAllowed))
             {
                 using var packet = MessageWriter.Get(MessageType.Reliable);
                 Message01JoinGameS2C.SerializeError(packet, false, DisconnectReason.Custom, DisconnectMessages.UsernameIllegalCharacters);
                 await connection.SendAsync(packet);
                 return;
-            }
+            }*/
 
             var client = _clientFactory.Create(connection, name, clientVersion, language, chatMode);
             var id = NextId();
