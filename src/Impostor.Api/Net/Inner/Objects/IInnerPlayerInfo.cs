@@ -16,6 +16,7 @@ namespace Impostor.Api.Net.Inner.Objects
         ///     Gets a value indicating whether the player is an impostor.
         /// </summary>
         bool IsImpostor { get; }
+        RoleTypes RoleType { get; }
 
         /// <summary>
         ///     Gets a value indicating whether the player is a dead in the current game.
