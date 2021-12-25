@@ -79,8 +79,10 @@ namespace Impostor.Server.Net.Inner.Objects.Components
                     switch (call)
                     {
                         case RpcCalls.EnterVent:
-                            await _eventManager.CallAsync(new PlayerEnterVentEvent(Game, sender, _playerControl, vent));
-                            break;
+                            //await _eventManager.CallAsync(new PlayerEnterVentEvent(Game, sender, _playerControl, vent));
+                            var @event = new PlayerEnterVentEvent(Game, sender, this._playerControl, vent);
+                            await _eventManager.CallAsync(@event);
+                            return !@event.IsCancelled;
                         case RpcCalls.ExitVent:
                             await _eventManager.CallAsync(new PlayerExitVentEvent(Game, sender, _playerControl, vent));
                             break;

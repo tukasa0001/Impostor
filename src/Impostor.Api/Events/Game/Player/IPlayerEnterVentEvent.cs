@@ -5,7 +5,7 @@ namespace Impostor.Api.Events.Player
     /// <summary>
     ///     Called whenever a player enters a vent.
     /// </summary>
-    public interface IPlayerEnterVentEvent : IPlayerEvent
+    public interface IPlayerEnterVentEvent : IPlayerEvent, IEventCancelable
     {
         /// <summary>
         ///     Gets the entered vent.
